@@ -1,19 +1,25 @@
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+import chart_studio.plotly as py
+import datetime as dt
+
 
 rop = pd.read_csv('rop.csv')
 rop = rop.dropna()
+rop['Date'] = pd.to_datetime(rop['Date'])
 new_v = {1:'Jan', 2:'Feb', 3:'March', 4:'April', 5:'May', 6:'June', 7:'July', 8:'Aug', 9:'Sep', 10:'Oct'}
+rop['Monthno'] =rop['Date'].dt.month
+rop['Day'] = rop['Date']. dt.day
 rop['Month'] = rop['Monthno'].replace(new_v)
-rop['Ndate'] = rop['Month']+'-'+rop['Day']
+rop['Ndate'] = rop['Month']+'-'+rop['Day'].astype('str')
 rop = rop.set_index(rop['Ndate'])
 
 fig = go.Figure()
 
 fig.add_traces(go.Scatter(
-                x = rop['Ndate'].loc[:'March-06'],
-                y = rop['Adj Close'].loc[:'March-06'],
+                x = rop['Ndate'].loc[:'March-6'],
+                y = rop['Adj Close'].loc[:'March-6'],
                 mode = 'lines+markers', name = 'Lockdown Begins',
                 line = dict(width = 1, color = 'blue'),
                 marker = dict(size = 4, color = 'white', line = dict(color = 'blue', width = 2))
@@ -21,39 +27,39 @@ fig.add_traces(go.Scatter(
 
 
 fig.add_traces(go.Scatter(
-                x = rop['Ndate'].loc['March-06':'April-08'],
-                y = rop['Adj Close'].loc['March-06':'April-08'],
+                x = rop['Ndate'].loc['March-6':'April-8'],
+                y = rop['Adj Close'].loc['March-6':'April-8'],
                 mode = 'lines+markers', name = 'Saudi and Russia Price War',
                 line = dict(width = 1, color = 'black'),
                 hovertemplate = 'Oil price:$%{y}',
                 marker = dict(size = 4, color = 'white', line = dict(color = 'black', width = 2))))
 
 fig.add_traces(go.Scatter(
-                x = rop['Ndate'].loc['April-09':'April-21'],
-                y = rop['Adj Close'].loc['April-09':'April-21'],
+                x = rop['Ndate'].loc['April-9':'April-21'],
+                y = rop['Adj Close'].loc['April-9':'April-21'],
                 mode = 'lines+markers', name = 'Reports of Storage Issues',
                 line = dict(width = 1, color = 'red'),
                 hovertemplate = 'Oil price:$%{y}',
                 marker = dict(size = 4, color = 'white', line = dict(color = 'red', width = 2))))
 
 fig.add_traces(go.Scatter(
-                x = rop['Ndate'].loc['April-21':'May-01'],
-                y = rop['Adj Close'].loc['April-21':'May-01'],
+                x = rop['Ndate'].loc['April-21':'May-1'],
+                y = rop['Adj Close'].loc['April-21':'May-1'],
                 mode = 'lines+markers', name = 'Oil Price Recovey',
                 line = dict(width = 1, color = 'yellow'),
                 hovertemplate = 'Oil price:$%{y}',
                 marker = dict(size = 4, color = 'white', line = dict(color = 'yellow', width = 2))))
 
 fig.add_traces(go.Scatter(
-                x = rop['Ndate'].loc['May-01':],
-                y = rop['Adj Close'].loc['May-01':],
+                x = rop['Ndate'].loc['May-1':],
+                y = rop['Adj Close'].loc['May-1':],
                 mode = 'lines+markers', name = 'OPEC meeting',
                 line = dict(width = 1, color = 'green'),
                 hovertemplate = 'Oil price:$%{y}',
                 marker = dict(size = 4, color = 'white', line = dict(color = 'green', width = 2))))
 
 
-x_vals = ['Jan-02', 'Feb-03', 'March-02', 'April-01', 'May-01', 'June-01', 'July-01', 'Aug-02', 'Sep-01', 'Oct-01']
+x_vals = ['Jan-2', 'Feb-3', 'March-2', 'April-1', 'May-1', 'June-1', 'July-1', 'Aug-2', 'Sep-1', 'Oct-1']
 x_labs = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October']
 ann = dict(text = '<b>Source: YahooFinance.com', xref = 'paper', yref = 'paper', x = 1, y = 1.05, font = dict(size = 10), showarrow = False)
 annt = []
@@ -77,4 +83,4 @@ fig.update_layout(
                 annotations = annt
 )
 
-fig.show()
+py.plot(fig, filename = 'Oilprice_Story')
